@@ -1,0 +1,96 @@
+<html>
+<head>
+
+<script src="../static/js/jquery-3.5.1.min.js"></script>
+<link href="../static/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="../static/css/delivery_css.css" rel="stylesheet" id="delivery-css">
+<link href="../static/css/login_css.css" rel="stylesheet" id="delivery-css">
+<script src="../static/js/bootstrap.min.js"></script>
+<script src="../static/js/general.js"></script>
+<script src="../static/js/bootbox.all.min.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#3073da">
+<meta name="msapplication-navbutton-color" content="#3073da">
+<meta name="apple-mobile-web-app-status-bar-style" content="#3073da">
+
+</head>
+
+<style>
+
+</style>
+
+<body style="background-color: #e7e7e775;">
+  <nav class="navtop">
+    <div>
+      <button class="btn btn-outline-info" onclick="open_information()">
+        <img src="../static/support.png" alt="Informacion">
+      </button>
+      <h1>Herramienta Web para el reconocimiento de emociones humanas a partir de imágenes</h1>
+    </div>
+  </nav>
+  <div class="container">
+    <table  style="min-width: -webkit-fill-available;">
+      <thead>
+        <tr>
+          <td class="tg-c3ow" style="border: ridge;" rowspan="2">
+            <img id="input_image" style="width:inherit; width: 14rem;">
+          </td>
+          <td class="tg-c3ow">
+            <button class="btn btn-outline-info">
+              <img src="../static/folder.png">
+              <input type="file" accept="image/*; capture=camera" id="image_in" onchange="pictureSelected()">
+            </button>
+          </td>
+          <td class="tg-c3ow">
+            <button class="btn btn-outline-info" onclick="activeVideoCam()">
+              <img src="../static/camera.png">
+            </button>
+          </td>
+          <td class="tg-c3ow">
+            <button id="download_btn" class="btn btn-danger" onclick="download_report()">Descargar</button>
+          </td>
+        </tr>
+        <tr>
+          <td class="tg-c3ow" colspan="2" rowspan="2">
+            <video id="video" width="574rem" height="320rem" playsinline autoplay></video>
+          </td>
+          <td class="tg-c3ow" colspan="2" rowspan="3" style="vertical-align: super;">
+            <div style="height: 306px; overflow: auto;text-align: justify;">
+              <table id="report_table" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Emoción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tg-0pky" style="border: ridge;" rowspan="2">
+            <img id="input_image_processed" style="width:inherit; width: 14rem;">
+          </td>
+        </tr>
+        <tr>
+          <td class="tg-0pky" colspan="2" style="text-align: center; vertical-align: baseline;">
+            <div style="width: 90%;">
+              <button class="btn btn-info" onclick=take_image() style="background-color: #21b817; display:none;" id="startStop">
+                Capturar foto
+              </button>
+            </div>
+            <div style="width: 90%;">
+              <canvas id="canvas" width="300rem" height="200rem"></canvas>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      </table>
+  </div>
+</body>
+</html>

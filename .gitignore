@@ -1,0 +1,6 @@
+notebooks/*
+static/*.h5
+static/happy_face*
+static/predictions/*
+
+venv/*
