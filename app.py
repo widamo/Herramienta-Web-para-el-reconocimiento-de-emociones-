@@ -13,7 +13,7 @@ app = Flask(__name__)
 #app.secret_key = secret
 
 #ruta = "/home/ubuntu/flaskproject/static/"
-ruta = "/home/edwin/Documentos/proyectos_ai/emotion_recognition/static/"
+ruta = "D:\Herramienta_Web_Emociones\Herramienta-Web-para-el-reconocimiento-de-emociones-\static/"
 
 class emotion_class:
     
@@ -41,18 +41,21 @@ class emotion_class:
     
     def get_detected_faces(self, input_image):
         """
-        función para detectar rostros dentro de una imagen
+        detectar rostros dentro de una imagen
         """
-        faces = self.faces_model.detectMultiScale(input_image, scaleFactor=1.4, minNeighbors=2
+        faces = self.faces_model.detectMultiScale(input_image, scaleFactor=1.2, minNeighbors=3
                                                   ,flags=cv2.CASCADE_SCALE_IMAGE)
         list_faces = []
+        index_count = 0
         if len(faces) != 0:
             #Pintar rectangulos encontrados
             for (x, y, w, h) in faces:
                 input_image=cv2.rectangle(input_image, (x, y), (x+w, y+h), (255, 0, 0), 2)
+                cv2.putText(input_image, str(index_count), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 1,(0, 0, 255), 3)
                 reg = input_image[y:(y+h),x:(x+w)]
                 reg_Scala = cv2.resize(reg,(48,48), interpolation=cv2.INTER_CUBIC)
                 list_faces.append(reg_Scala)
+                index_count += 1
 
         return input_image, list_faces
     
@@ -92,14 +95,10 @@ def predict_function():
             )
             index += 1
     else:
-        pro_img = ec_model.process_image(cv2.resize(img,(48,48), 
-                                                    interpolation=cv2.INTER_CUBIC), 48)
-        prediction = ec_model.predict_class(pro_img)
-        name_split = file_name.split(".")
         result.append(
-            {"label": prediction,
-            "filename": name_split[0] + "_" + str(index) + "."+ name_split[1] ,
-            "image_url": "../static/predictions/" + file_name}
+            {
+                "label": "nothing"
+            }
         )
     
     cv2.imwrite(ruta + "/predictions/" + file_name,  faces) 
@@ -128,15 +127,20 @@ def predict_canvas_function():
             )
             index += 1
     else:
-        pro_img = ec_model.process_image(cv2.resize(opencv_img,(48,48), 
-                                                    interpolation=cv2.INTER_CUBIC), 48)
-        prediction = ec_model.predict_class(pro_img)
-        name_split = file_name.split(".")
         result.append(
-            {"label": prediction,
-            "filename": name_split[0] + "_" + str(index) + "."+ name_split[1] ,
-            "image_url": "../static/predictions/" + file_name}
+            {
+                "label": "nothing"
+            }
         )
+        #pro_img = ec_model.process_image(cv2.resize(opencv_img,(48,48), 
+        #                                            interpolation=cv2.INTER_CUBIC), 48)
+        #prediction = ec_model.predict_class(pro_img)
+        #name_split = file_name.split(".")
+        #result.append(
+        #    {"label": prediction,
+        #    "filename": name_split[0] + "_" + str(index) + "."+ name_split[1] ,
+        #    "image_url": "../static/predictions/" + file_name}
+        #)
     cv2.imwrite(ruta + "/predictions/" + file_name,  faces) 
     return result
 

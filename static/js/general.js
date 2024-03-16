@@ -7,12 +7,10 @@ function take_image(){
     const snap = document.getElementById("startStop");
     var context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, 300, 200);
-    //var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-    //var image_array = imgData.data;
     var imgURL = canvas.toDataURL();
     image = imgURL.replace('data:image/png;base64,', '');
     dialog = bootbox.dialog({
-        message: '<p class="text-center mb-0"><i class="fas fa-spin fa-cog"></i> Uploading and Predicting...</p>',
+        message: '<p class="text-center mb-0"><i class="fas fa-spin fa-cog"></i> Cargando y Prediciendo...</p>',
         closeButton: false
         });
     $.ajax({
@@ -25,22 +23,39 @@ function take_image(){
         success: function(response){
             dialog.modal("hide");
             table = document.getElementById('report_table').getElementsByTagName('tbody')
-            for (var i = 0; i < response.length; i++) {
-                $(table).append("<tr><th scope='row'>" + response[i]["filename"] + "</th><td>" + response[i]["label"] + "</td></tr>");
-              }
-
-              var image_pro = document.getElementById('input_image_processed');
-              image_pro.src = response[0]["image_url"];
-              image_pro.setAttribute( "onClick", 'window.open("'+response[0]['image_url']+'", "_blank");');
-
-            bootbox.alert({
-            size: "small",
-            title: "<b><h3>Prediction</h3></b>",
-            message: "Emoción: " + response[0]["label"],
-            callback: function(){
-                dialog.modal("hide");
+            var msg_pre_list = ""
+            var count = 0
+            if (response[0]["label"] != "nothing"){
+                for (var i = 0; i < response.length; i++) {
+                    $(table).append("<tr><th scope='row'>" + response[i]["filename"] + "</th><td>" + response[i]["label"] + "</td></tr>");
+                    msg_pre_list += "<li>" + String(count) + ": " + response[i]["label"]
+                    count += 1
+                  }
+    
+                  var image_pro = document.getElementById('input_image_processed');
+                  image_pro.src = response[0]["image_url"];
+                  image_pro.setAttribute( "onClick", 'window.open("'+response[0]['image_url']+'", "_blank");');
+    
+                bootbox.alert({
+                size: "small",
+                title: "<b><h3>Predicción</h3></b>",
+                message: "Emoción: " + msg_pre_list,
+                callback: function(){
+                    dialog.modal("hide");
+                }
+                });
             }
-            });
+            else {
+                bootbox.alert({
+                    size: "small",
+                    title: "<b><h3>Lo siento!</h3></b>",
+                    message: "No se reconoció ningún rostro en la imagen, por lo que no es posible predecir una emoción.",
+                    callback: function(){
+                        dialog.modal("hide");
+                    }
+                    });
+            }
+            
         },
         error: function(response){
             bootbox.alert({
@@ -58,8 +73,8 @@ function take_image(){
 
 function open_information (){
     bootbox.alert({
-        title: 'Información de uso:',
-        message: 'Listamos la funcionalidad de los iconos: <lu> <li>Con <img src="../static/folder.png" style="width:7%;" alt="Informacion"> podrás cargar una foto, lo que desencadenara la segmentación del/los rostros en la imágen y el reconocimiento de la/las emociones.</li> <li>Con <img src="../static/camera.png" style="width:7%;" alt="Informacion"> activarás la cámara. Permitiendote tomar fotos en las cuales se detectarán los rostros y sus emociones.</li> <li>Con el botón <button class="btn btn-danger">Descargar</button> podrás obtener un archivo .csv el cual contendrá las predicciones realizadas.</li> <li>Con el botón <button class="btn btn-info" style="background-color: #21b817;">Capturar foto </button> podrás capturar una foto en tiempo real y observar la predicción.</li> <li> Finalmente, si das click sobre la imágen inferior izquierda podrás verla apliada en una nueva pestaña. Esto te permitirá observar mejor la detección de rostros realizada.</li></lu>',
+        title: 'Información de Uso:',
+        message: 'Herramienta Web para el reconocimiento de emociones humanas a partir de imagenes. A continuación, se detalla la función de cada uno de los íconos.<lu><li><img src="../static/folder.png" style="width:8%;" alt="Informacion"> Cargar un archivo de Imagen. Se activará automaticamente la función de segmentación de rostros en la imagen, seguida del reconocimiento de emociones. </li><li><img src="../static/camera.png" style="width:8%;" alt="Informacion"> Activar camara del dispositivo. </li><li><button class="btn btn-info" style="background-color: #21b817;font-size: 80%;">Capturar foto </button> Capturar una foto en tiempo real. La función de segmentación de rostros en la imagen se activará automáticamente, seguida del reconocimiento de emociones. </li><li> <button class="btn btn-danger" style="font-size: 80%;">Descargar</button> Descargar un archivo CSV que contiene el informe completo de las predicciones realizadas.</li><li>Finalmente, al hacer clic sobre la imagen que se encuentra en el panel izquierdo en la parte inferior, se ampliará automaticamente en una nueva pestaña donde se mostrara la detección y segmentación de los rostros realizada. </li></lu>',
         buttons: {
         }
         });
@@ -77,7 +92,7 @@ function pictureSelected(){
     data.append('file',files[0]);
 
     dialog = bootbox.dialog({
-        message: '<p class="text-center mb-0"><i class="fas fa-spin fa-cog"></i> Uploading and Predicting...</p>',
+        message: '<p class="text-center mb-0"><i class="fas fa-spin fa-cog"></i> Cargando y Prediciendo...</p>',
         closeButton: false
         });
     $.ajax({
@@ -90,22 +105,38 @@ function pictureSelected(){
         success: function(response){
             dialog.modal("hide");
             table = document.getElementById('report_table').getElementsByTagName('tbody')
-            for (var i = 0; i < response.length; i++) {
-                $(table).append("<tr><th scope='row'>" + response[i]["filename"] + "</th><td>" + response[i]["label"] + "</td></tr>");
-              }
+            msg_pre_list = ""
+            if (response[0]["label"] != "nothing"){
+                var count = 0
+                for (var i = 0; i < response.length; i++) {
+                    $(table).append("<tr><th scope='row'>" + response[i]["filename"] + "</th><td>" + response[i]["label"] + "</td></tr>");
+                    msg_pre_list += "<li>" + String(count) + ": " + response[i]["label"]
+                    count += 1
+                }
+                var image_pro = document.getElementById('input_image_processed');
+                image_pro.src = response[0]["image_url"];
+                image_pro.setAttribute( "onClick", 'window.open("'+response[0]['image_url']+'", "_blank");');
 
-            var image_pro = document.getElementById('input_image_processed');
-            image_pro.src = response[0]["image_url"];
-            image_pro.setAttribute( "onClick", 'window.open("'+response[0]['image_url']+'", "_blank");');
-
-            bootbox.alert({
-            size: "small",
-            title: "<b><h3>Prediction</h3></b>",
-            message: "Emoción: " + response[0]["label"],
-            callback: function(){
-                dialog.modal("hide");
+                bootbox.alert({
+                size: "small",
+                title: "<b><h3>Predicción</h3></b>",
+                message: "Emoción(es): " + msg_pre_list,
+                callback: function(){
+                    dialog.modal("hide");
+                }
+                });
             }
-            });
+            else{
+                bootbox.alert({
+                    size: "small",
+                    title: "<b><h3>Lo siento!</h3></b>",
+                    message: "No se reconoció ningún rostro en la imagen, por lo que no es posible predecir una emoción.",
+                    callback: function(){
+                        dialog.modal("hide");
+                    }
+                    });
+            }
+            
         },
         error: function(response){
             bootbox.alert({
@@ -177,7 +208,7 @@ function download_report(){
     // download process
     let temp_link = document.createElement('a');
     // Download csv file
-    temp_link.download = "reporte.csv";
+    temp_link.download = "Informe.csv";
     let url = window.URL.createObjectURL(csv_file);
     temp_link.href = url;
     // This link should not be displayed
